@@ -2,6 +2,9 @@
 PROFILE=yustam.jp
 BUCKET_NAME=blog-sample-tokyo
 
+# build
+gulp build
+# upload
 aws s3\
   --profile $PROFILE\
   cp\

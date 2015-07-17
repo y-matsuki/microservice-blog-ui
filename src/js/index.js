@@ -1,24 +1,6 @@
-var endpoint = "https://0000000000.execute-api.us-east-1.amazonaws.com/prod/microservice-http-endpoint";
-var api_key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-var table_name = "blog-post";
-
-var call_api = function(data, callback) {
-  $.ajax({
-    url: endpoint,
-    type: 'POST',
-    headers: {
-      'x-api-key': api_key,
-      'Content-Type': 'application/json'
-    },
-    dataType: 'json',
-    data: JSON.stringify(data),
-  }).done(callback);
-}
-
 var show_list = function() {
   var data = {
-    "operation": "list",
-    "TableName": table_name
+    "operation": "list"
   }
   call_api(data, function(resp) {
     if (resp.errorType) {
@@ -32,7 +14,6 @@ var show_list = function() {
 var post_item = function() {
   var data = {
     "operation": "create",
-    "TableName": table_name,
     "Item": {
       "user": $('#form-user').val(),
       "title": $('#form-title').val(),
