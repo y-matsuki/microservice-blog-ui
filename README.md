@@ -14,6 +14,22 @@ $ gulp build
 $ gulp debug
 ```
 
+## config
+
+Edit **src/js/config.js**.
+
+- ENDPOINT: your api gateway endpoint.
+- API_KEY: your api gateway api-key.
+- TABLE_NAME: your DynamoDB table name.
+ - HashKey: { S: user }
+ - RangeKey: { N: date }
+
+```javascript
+var ENDPOINT = "https://0000000000.execute-api.us-east-1.amazonaws.com/prod/microservice-http-endpoint";
+var API_KEY = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+var TABLE_NAME = "blog-post"
+```
+
 ## deploy
 
 1. Create s3 bucket.
