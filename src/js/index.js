@@ -7,6 +7,18 @@ var show_list = function() {
       console.error(resp.errorMessage);
     } else {
       console.log(resp);
+      var list = $('<ul>');
+      resp.Items.forEach(function(item) {
+        console.log(item);
+        list.append($('<li>').text(item.title));
+        list.append($('<li>').text(item.user));
+        list.append($('<li>').text(moment(item.date)
+          .format('YYYY-MM-DD HH:mm:ssZ')));
+        list.append($('<li>').text(item.text));
+      });
+      var div = $('<div>').append(list);
+      div.addClass('list');
+      $('body').append(div);
     }
   });
 }
