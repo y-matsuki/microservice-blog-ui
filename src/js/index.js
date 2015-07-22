@@ -19,9 +19,12 @@ var show_list = function() {
                .append($('<p>').text(item.text)));
         content.append($('<div>').addClass('extra')
               .text(moment(item.date).format('YYYY-MM-DD HH:mm:ssZ')));
-        content.append($('<div>').addClass('extra')
-               .append($('<div>').addClass('ui right floated small button')
-               .click(delete_item(item.user, item.date)).text('Delete')));
+        var button = $('<div>')
+            .addClass('ui right floated small button').text('Delete');
+        button.click(function() {
+          delete_item(item.user, item.date);
+        });
+        content.append($('<div>').addClass('extra').append(button));
       });
       var div = $('<div>').append(content);
       div.addClass('item');
@@ -45,6 +48,9 @@ var post_item = function() {
       console.error(resp.errorMessage);
     } else {
       console.log(resp);
+      $('#form-user').val('');
+      $('#form-title').val('');
+      $('#form-text').val('');
       show_list();
     }
   });
