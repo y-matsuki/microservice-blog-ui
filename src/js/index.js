@@ -1,38 +1,3 @@
-var show_list = function() {
-  var data = {
-    "operation": "list"
-  }
-  call_api(data, function(resp) {
-    if (resp.errorType) {
-      console.error(resp.errorMessage);
-    } else {
-      console.log(resp);
-      $('.items').children().remove();
-      var content = $('<div>');
-      content.addClass('content');
-      resp.Items.forEach(function(item) {
-        console.log(item);
-        content.append($('<a>').addClass('header').text(item.title));
-        content.append($('<div>').addClass('meta')
-               .append($('<span>').text(item.user)));
-        content.append($('<div>').addClass('description')
-               .append($('<p>').text(item.text)));
-        content.append($('<div>').addClass('extra')
-              .text(moment(item.date).format('YYYY-MM-DD HH:mm:ssZ')));
-        var button = $('<div>')
-            .addClass('ui right floated small button').text('Delete');
-        button.click(function() {
-          delete_item(item.user, item.date);
-        });
-        content.append($('<div>').addClass('extra').append(button));
-      });
-      var div = $('<div>').append(content);
-      div.addClass('item');
-      $('.items').append(div);
-    }
-  });
-}
-
 var post_item = function() {
   var data = {
     "operation": "create",
