@@ -1,6 +1,7 @@
 var ArticleItem = React.createClass({
   render: function() {
     var item = this.props.item;
+    var rawMarkup = marked(item.text, {sanitize: true});
     var date = moment(item.date).format('YYYY-MM-DD HH:mm:ssZ');
     return (
       <div className="item">
@@ -10,7 +11,7 @@ var ArticleItem = React.createClass({
             <span>{item.user}</span>
           </div>
           <div className="description">
-            <p>{item.text}</p>
+            <p dangerouslySetInnerHTML={{__html: rawMarkup}} />
           </div>
           <div className="extra">{date}</div>
           <div className="extra">
@@ -19,6 +20,19 @@ var ArticleItem = React.createClass({
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+});
+
+var ArticleList = React.createClass({
+  render: function() {
+    var items = this.props.data.map(function (item) {
+      return (<ArticleItem key={item.date} item={item} />);
+    });
+    return(
+      <div id="items" className="ui items">
+        {items}
       </div>
     );
   }
@@ -34,15 +48,8 @@ var show_list = function() {
     } else {
       console.log(resp);
       $('.items').children().remove();
-      var items = [];
-      resp.Items.forEach(function(item) {
-        console.log(item);
-        items.push(<ArticleItem item={item} />);
-      });
       React.render(
-        <div id="items" class="ui items">
-          {items}
-        </div>,
+        <ArticleList data={resp.Items} />,
         document.getElementById('list')
       );
     }
