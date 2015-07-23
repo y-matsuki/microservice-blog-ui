@@ -38,20 +38,64 @@ var ArticleList = React.createClass({
   }
 });
 
-var show_list = function() {
-  var data = {
-    "operation": "list"
+var ArticleForm = React.createClass({
+  render: function() {
+    return(
+      <form className="ui form">
+        <div className="field">
+          <label>Title</label>
+          <input id="form-title" type="text" name="title" placeholder="title"/>
+        </div>
+        <div className="field">
+          <label>User Name</label>
+          <input id="form-user" type="text" name="user" placeholder="user"/>
+        </div>
+        <div className="field">
+          <div className="field">
+            <label>Text</label>
+            <textarea id="form-text" rows="2"></textarea>
+          </div>
+        </div>
+        <button id="form-submit" className="ui button" type="button">Submit</button>
+      </form>
+    );
   }
-  call_api(data, function(resp) {
-    if (resp.errorType) {
-      console.error(resp.errorMessage);
-    } else {
-      console.log(resp);
-      $('.items').children().remove();
-      React.render(
-        <ArticleList data={resp.Items} />,
-        document.getElementById('list')
-      );
+});
+
+var ContentBox = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    var data = {
+      "operation": "list"
     }
-  });
+    xxx = this;
+    call_api(data, function(resp) {
+      if (resp.errorType) {
+        console.error(resp.errorMessage);
+      } else {
+        console.log(resp);
+        xxx.setState({data: resp.Items});
+      }
+    });
+  },
+  render: function() {
+    return(
+      <div className="ui container">
+        <div className="label">
+          <h1>blog-sample-tokyo</h1>
+        </div>
+        <ArticleList data={this.state.data} />
+        <ArticleForm />
+      </div>
+    );
+  }
+});
+
+var show_list = function() {
+  React.render(
+    <ContentBox />,
+    document.getElementById('content')
+  );
 }
