@@ -5,14 +5,21 @@ var ArticleItem = React.createClass({
       "Key": {
         "user": this.props.item.user,
         "date": this.props.item.date
-      }
+      },
+      "TableName": TABLE_NAME
     }
-    call_api(data, function(resp) {
-      if (resp.errorType) {
-        console.error(resp.errorMessage);
-      } else {
-        console.log(resp);
-      }
+    $.ajax({
+      url: ENDPOINT,
+      type: 'POST',
+      headers: HEADERS,
+      dataType: 'json',
+      data: JSON.stringify(data),
+      success: function(data) {
+        console.log(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
     });
   },
   render: function() {
@@ -98,30 +105,48 @@ var ContentBox = React.createClass({
   },
   componentDidMount: function() {
     var data = {
-      "operation": "list"
+      "operation": "list",
+      "TableName": TABLE_NAME
     }
-    xxx = this;
-    call_api(data, function(resp) {
-      if (resp.errorType) {
-        console.error(resp.errorMessage);
-      } else {
-        console.log(resp);
-        xxx.setState({data: resp.Items});
-      }
+    $.ajax({
+      url: ENDPOINT,
+      type: 'POST',
+      headers: HEADERS,
+      dataType: 'json',
+      data: JSON.stringify(data),
+      success: function(data) {
+        console.log(data);
+        this.setState({data: data.Items});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
     });
   },
   onSubmit: function(item) {
     item.date = new Date().getTime();
     var data = {
       "operation": "create",
-      "Item": item
+      "Item": item,
+      "TableName": TABLE_NAME
     }
-    call_api(data, function(resp) {
-      if (resp.errorType) {
-        console.error(resp.errorMessage);
-      } else {
-        console.log(resp);
-      }
+
+    var xxx = this.state.data;
+    xxx.push(item);
+    this.setState({data: xxx});
+
+    $.ajax({
+      url: ENDPOINT,
+      type: 'POST',
+      headers: HEADERS,
+      dataType: 'json',
+      data: JSON.stringify(data),
+      success: function(data) {
+        console.log(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
     });
   },
   render: function() {
