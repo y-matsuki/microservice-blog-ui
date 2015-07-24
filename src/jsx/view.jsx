@@ -1,4 +1,20 @@
 var ArticleItem = React.createClass({
+  handleDelete: function(e) {
+    var data = {
+      "operation": "delete",
+      "Key": {
+        "user": this.props.item.user,
+        "date": this.props.item.date
+      }
+    }
+    call_api(data, function(resp) {
+      if (resp.errorType) {
+        console.error(resp.errorMessage);
+      } else {
+        console.log(resp);
+      }
+    });
+  },
   render: function() {
     var item = this.props.item;
     var rawMarkup = marked(item.text, {sanitize: true});
@@ -15,7 +31,7 @@ var ArticleItem = React.createClass({
           </div>
           <div className="extra">{date}</div>
           <div className="extra">
-            <div className="ui right floated small button">
+            <div className="ui right floated small button" onClick={this.handleDelete}>
               Delete
             </div>
           </div>
@@ -31,7 +47,7 @@ var ArticleList = React.createClass({
       return (<ArticleItem key={item.date} item={item} />);
     });
     return(
-      <div id="items" className="ui items">
+      <div className="ui items">
         {items}
       </div>
     );
@@ -39,24 +55,38 @@ var ArticleList = React.createClass({
 });
 
 var ArticleForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var title = React.findDOMNode(this.refs.title).value.trim();
+    var user = React.findDOMNode(this.refs.user).value.trim();
+    var text = React.findDOMNode(this.refs.text).value.trim();
+    if (!title || !user || !text) {
+      return;
+    }
+    this.props.onSubmit({title: title, user: user, text: text});
+    React.findDOMNode(this.refs.title).value = '';
+    React.findDOMNode(this.refs.user).value = '';
+    React.findDOMNode(this.refs.text).value = '';
+    return;
+  },
   render: function() {
     return(
       <form className="ui form">
         <div className="field">
           <label>Title</label>
-          <input id="form-title" type="text" name="title" placeholder="title"/>
+          <input type="text" ref="title" placeholder="title"/>
         </div>
         <div className="field">
           <label>User Name</label>
-          <input id="form-user" type="text" name="user" placeholder="user"/>
+          <input type="text" ref="user" placeholder="user"/>
         </div>
         <div className="field">
           <div className="field">
             <label>Text</label>
-            <textarea id="form-text" rows="2"></textarea>
+            <textarea ref="text" rows="2"></textarea>
           </div>
         </div>
-        <button id="form-submit" className="ui button" type="button">Submit</button>
+        <button className="ui button" type="button" onClick={this.handleSubmit}>Submit</button>
       </form>
     );
   }
@@ -80,6 +110,20 @@ var ContentBox = React.createClass({
       }
     });
   },
+  onSubmit: function(item) {
+    item.date = new Date().getTime();
+    var data = {
+      "operation": "create",
+      "Item": item
+    }
+    call_api(data, function(resp) {
+      if (resp.errorType) {
+        console.error(resp.errorMessage);
+      } else {
+        console.log(resp);
+      }
+    });
+  },
   render: function() {
     return(
       <div className="ui container">
@@ -87,15 +131,13 @@ var ContentBox = React.createClass({
           <h1>blog-sample-tokyo</h1>
         </div>
         <ArticleList data={this.state.data} />
-        <ArticleForm />
+        <ArticleForm onSubmit={this.onSubmit} />
       </div>
     );
   }
 });
 
-var show_list = function() {
-  React.render(
-    <ContentBox />,
-    document.getElementById('content')
-  );
-}
+React.render(
+  <ContentBox />,
+  document.getElementById('content')
+);
